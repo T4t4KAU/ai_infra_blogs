@@ -1,0 +1,30 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+AccessModifierOffset: -4
+AlignOperands: AlignAfterOperator
+BreakBeforeBinaryOperators: All
+ColumnLimit: 120
+AllowShortBlocksOnASingleLine: Always 
+AllowShortLoopsOnASingleLine: true
+InsertBraces: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: false
+  AfterControlStatement: Never
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true

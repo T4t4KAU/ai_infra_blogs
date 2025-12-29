@@ -1,0 +1,2 @@
+# DL_SYS_COURSE
+本章节主要记录国内外经典AI INFRA课程的学习过程
