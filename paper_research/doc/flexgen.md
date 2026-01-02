@@ -341,24 +341,36 @@ FlexGen 最终把策略写成一个 **policy**，包含 11 个变量：
 -  placement 归一化约束：
 
   ```math
-  wg + wc + wd = 1 \\
-  hg + hc + hd = 1 \\
+  wg + wc + wd = 1
+  ```
+  ```math
+  hg + hc + hd = 1
+  ```
+  ```math
   cg + cc + cd = 1
   ```
 
 - 峰值内存约束：
 
   ```math
-  gpu \space peak \space memory < gpu \space mem \space capacity \\
-  cpu \space peak \space memory < cpu \space mem \space capacity \\
+  gpu \space peak \space memory < gpu \space mem \space capacity
+  ```
+  ```math
+  cpu \space peak \space memory < cpu \space mem \space capacity
+  ```
+  ```math
   disk \space peak \space memory < disk \space mem \space capacity
   ```
 
 - 非负性约束：
 
   ```math
-  wg, wc, wd ≥ 0 \\
-  hg, hc, hd ≥ 0 \\
+  wg, wc, wd ≥ 0
+  ```
+  ```math
+  hg, hc, hd ≥ 0
+  ```
+  ```math
   cg, cc, cd ≥ 0
   ```
 
