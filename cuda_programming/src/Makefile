@@ -11,7 +11,7 @@ NCU_DIR   := ncu-reports
 
 COMMON_FLAGS  := -std=c++17 -arch=sm_$(ARCH)
 RELEASE_FLAGS := -O3 --use_fast_math
-DEBUG_FLAGS   := -O3 -g -G
+DEBUG_FLAGS   := -O3 --use_fast_math -g -G -lineinfo
 
 ifeq ($(BUILD),debug)
   NVCC_FLAGS := $(COMMON_FLAGS) $(DEBUG_FLAGS)
@@ -61,6 +61,18 @@ cutlass_sgemm_bench: cutlass_sgemm_bench.cu
 		-I$(CUTLASS)/tools/util/include \
 		$< -o $(BUILD_DIR)/$@
 
+softmax_v1: softmax_v1.cu
+	@mkdir -p $(BUILD_DIR)
+	$(NVCC) $(NVCC_FLAGS) $< -o $(BUILD_DIR)/$@
+
+softmax_v2: softmax_v2.cu
+	@mkdir -p $(BUILD_DIR)
+	$(NVCC) $(NVCC_FLAGS) $< -o $(BUILD_DIR)/$@
+
+softmax_v3: softmax_v3.cu
+	@mkdir -p $(BUILD_DIR)
+	$(NVCC) $(NVCC_FLAGS) $< -o $(BUILD_DIR)/$@
+
 # ============================================================
 # NCU profiling rule (generic)
 # ============================================================
@@ -71,6 +83,14 @@ cutlass_sgemm_bench: cutlass_sgemm_bench.cu
 	$(NCU) $(NCU_FLAGS) \
 		-o $(NCU_DIR)/$< \
 		$(BUILD_DIR)/$<
+
+# ============================================================
+# format
+# ============================================================
+
+.PHONY: format
+format:
+	python3 ../scripts/format.py --path .
 
 # ============================================================
 # Clean
