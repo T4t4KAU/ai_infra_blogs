@@ -57,9 +57,11 @@ $$
 $$
 
 - 不具备尺度不变性：
+
   $$
   \text{Softmax}(\alpha z) \neq \text{Softmax}(z)
   $$
+  
 
 要注意的是，Softmax中的指数函数增长是非常快的：
 
@@ -99,6 +101,8 @@ $$
 把每个 Query 对所有 Key 的相似度，转换成 **『注意力权重分布』**，每一行表示"我该关注谁"，强调最相关 token。
 
 ## V1 最朴素Softmax计算
+
+源代码：[softmax_v1.cu](https://github.com/T4t4KAU/ai_infra_blogs/blob/main/cuda_programming/src/softmax_v1.cu)
 
 可以很轻松地实现一个最朴素版本的Softmax Kernel：
 
@@ -197,6 +201,8 @@ for (int col = 0; col < num_cols; ++col) {
 同样是遍历，这部分也可以并行化。
 
 ## V2 Shared Memory & Block Reduce
+
+源代码：[softmax_v2.cu](https://github.com/T4t4KAU/ai_infra_blogs/blob/main/cuda_programming/src/softmax_v2.cu)
 
 为了优化上述两个部分，我们基于共享内存实现块内加速。
 
@@ -388,6 +394,8 @@ for (int stride = block_size / 2; stride > 0; stride >>= 1) {
 这里的循环携带依赖才是FMNMX被停顿的根本原因，导致了大量的FP依赖。虽然定位到了问题，但是很遗憾，笔者没有能力优化这个瓶颈，这是一个典型的二叉树规约，这一层的数据要依赖上一层的数据这顺理成章，笔者并无先验知识可以消除这个依赖🥹
 
 ## V3 Warp Shuffle Instructions
+
+源代码：[softmax_v3.cu](https://github.com/T4t4KAU/ai_infra_blogs/blob/main/cuda_programming/src/softmax_v3.cu)
 
 不过好在，我们可以对访存再做一步优化。
 
