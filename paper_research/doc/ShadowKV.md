@@ -43,7 +43,7 @@ $$
 \sum_{i \in \mathcal{I}_t}, \quad |\mathcal{I}_t| \ll S
 $$
 
-其中，$\mathcal{I}_t$ 是**被选中的 token 子集**，这就是『稀疏性』的来源
+其中，$I_t$ 是**被选中的 token 子集**，这就是『稀疏性』的来源
 
 那么就引入了两个关键问题：
 
@@ -804,7 +804,6 @@ $$
 在 GQA / MQA 中，多个 query head 共享一个 KV head，用 max 聚合可保留最"激进"的关注信号。
 
 **Step 2：Top-k Chunk Selection（稀疏化）**
-
 $$
 I \in \mathbb{R}^{b \times h_{kv} \times k}
 \leftarrow \text{ArgTopK}(S_2, k)
@@ -950,9 +949,43 @@ $$
 
 ## 实验复现
 
-TODO
+基于Docker镜像进行复现，首先拉取镜像：
 
+```powershell
+docker pull nvidia/cuda:12.1.1-devel-ubuntu22.04
+```
 
+启动容器：
 
+```powershell
+docker run -it --rm \
+  --gpus all \
+  -v `pwd`/ShadowKV:/ShadowKV \
+  nvidia/cuda:12.1.1-devel-ubuntu22.04 \
+  bash
+```
 
+安装工具链：
+
+```powershell
+apt update
+apt install -y \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python-is-python3 \
+    build-essential \
+    git \
+    ca-certificates
+```
+
+升级pip：
+
+```powershell
+pip install --upgrade pip setuptools wheel
+```
+
+接下来进入项目目录，按照README执行就行
+
+(Pending)
 

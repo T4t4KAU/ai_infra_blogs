@@ -58,9 +58,9 @@ $$
 
 - 不具备尺度不变性：
 
-  $$
+  ```math
   \text{Softmax}(\alpha z) \neq \text{Softmax}(z)
-  $$
+  ```
   
 
 要注意的是，Softmax中的指数函数增长是非常快的：
