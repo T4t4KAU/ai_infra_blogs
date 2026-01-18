@@ -40,9 +40,11 @@ Can we design a KV caching system that is both sparsity-aware and system-optimiz
 - top-k routing：每个 token 只激活 $k \ll E$ 个 experts。
 
 在传统系统实现（Dense Caching）中，**为方便访问与并行，系统会把每个 expert 的 KV 都在每张 GPU 上复制或保持全局一致视图**，如果每个 expert 都维护长度 $L$ 的 KV 序列，每个 token 的 KV 大小量级 $\Theta(d)$，那么每个 expert 的 cache 量级 $\Theta(Ld)$，总共 $E$ 个 expert就占据如下空间：
+
 $$
 \text{Mem}_{\text{dense}} \sim E \cdot L \cdot d
 $$
+
 可估计Dense Caching 的内存成本是 $O(L\cdot d\cdot E)$（per GPU），**这强调的是“复制/全量保留”的上界**，不是说所有实现都必须这样，但说明了为什么在长上下文+多专家下会爆内存。
 
 **Challenge 1：Expert-sharded KV fragmentation（路由导致的碎片化）**
@@ -50,9 +52,11 @@ $$
 token-level routing 把不同 token 分配到不同 experts，进一步在多 GPU 情况下把 KV 也分散在不同设备上。
 
 论文用：
+
 $$
 KV_t^{(e)} \in \mathbb{R}^{k\times d},\quad e\in \mathcal{R}(q_t)
 $$
+
 表达对当前 query $q_t$，只会涉及到路由到的那 $k$ 个 experts 的 KV 子集。
 
 **历史 token 的 KV 不再是一个连续、局部可访问的数组**，而变成按 expert / 按设备分片的多个段，且这些段的时间顺序被打散（时间局部性被破坏）。
@@ -72,9 +76,11 @@ MoE 路由把历史 token 的 KV 切散了：
 **Challenge 2：Latency bottleneck from sparse lookup（稀疏计算≠低延迟）**
 
 论文给了一个期望延迟的分解：
+
 $$
 \mathbb{E}[\text{Latency}] \sim O(k\cdot T_{\text{lookup}} + T_{\text{sync}})
 $$
+
 并指出 $T_{\text{sync}}$ 来自 inter-GPU 通信。
 
 这不是严格等式，是系统层面的量级分解，表达两类成本：
@@ -121,6 +127,7 @@ PiKV针对这三个挑战进行设计：
 - Scheduling is jointly optimized with routing，联动routing
 
 将原本互相独立的问题看成一个耦合的问题进行优化，routing / compression / scheduling 这三个系统 knobs 上做联合优化，定义系统目标函数：
+
 $$
 \min_{R,C,S} \; \mathbb{E}_{q\sim Q}
 \big[
@@ -129,6 +136,7 @@ $$
 - \lambda_2 \cdot \text{Fidelity}(q)
 \big]
 $$
+
 其中：
 
 - **Latency(q)**：KV lookup/通信/同步等待开销
@@ -145,4 +153,8 @@ $$
 
 ## 系统设计
 
+TODO
+
 ## 实验复现
+
+TODO

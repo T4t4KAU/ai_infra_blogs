@@ -43,7 +43,7 @@ $$
 \sum_{i \in \mathcal{I}_t}, \quad |\mathcal{I}_t| \ll S
 $$
 
-其中，$I_t$ 是**被选中的 token 子集**，这就是『稀疏性』的来源
+其中， $I_t$ 是**被选中的 token 子集**，这就是『稀疏性』的来源
 
 那么就引入了两个关键问题：
 
@@ -949,11 +949,13 @@ $$
 
 ## 实验复现
 
-基于Docker镜像进行复现，首先拉取镜像：
+基将于Docker镜像进行复现，首先拉取镜像：
 
 ```powershell
 docker pull nvidia/cuda:12.1.1-devel-ubuntu22.04
 ```
+
+建议在这个容器里进行。
 
 启动容器：
 
@@ -985,7 +987,7 @@ apt install -y \
 pip install --upgrade pip setuptools wheel
 ```
 
-接下来进入项目目录，按照README执行就行
+接下来进入项目目录，按照README执行就行，不过有几点得格外注意。有的包在安装的时候得加`--no-build-isolation`，不然会`ModuleNotFound`；并且transformers这个包建议用4.46，而不是requirements.txt中的4.43，复现过程中可能有大大小小的坑。
 
-(Pending)
+本人是在4卡A6000上跑eval_acc，分别运行：
 

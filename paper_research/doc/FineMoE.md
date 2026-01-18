@@ -13,15 +13,19 @@
 在 Dense Transformer（也就是我们说的稠密模型） 中，**每一层的所有参数**都会参与**每一个 token** 的前向与反向计算，计算复杂度与参数规模线性相关。
 
 数学上（以 FFN 为例）：
+
 $$
 y = W_2 \sigma(W_1 x)
 $$
+
 MoE 的核心思想是：**用多个专家网络（Experts）替代单个 FFN，每个 token 只激活其中少数几个专家**
 
 形式上：
+
 $$
 y = \sum_{i \in \mathcal{E}(x)} g_i(x) \cdot f_i(x)
 $$
+
 其中：
 
 - $f_i$：第 $i$ 个 expert（通常是 FFN）
@@ -50,13 +54,17 @@ MoE 并非 Dense 的完全替代，而是在算力受限、参数可扩展的前
 现在看看MoE 的训练机制。
 
 我们要建立路由（Routing / Gating）机制，对于每个 token 表征 $x$：
+
 $$
 g(x) = \text{softmax}(W_g x)
 $$
+
 选取 Top-k：
+
 $$
 \mathcal{E}(x) = \text{TopK}(g(x))
 $$
+
 
 - **Switch Transformer**：Top-1
 - **GShard / DeepSeek-MoE**：Top-2
@@ -147,9 +155,11 @@ $$
 $$
 
 **Step 5：Residual**
+
 $$
 Y = H + \text{MoE}(H)
 $$
+
 **Step 6：进入下一层**
 
 - 下一层是新的 block
@@ -160,12 +170,15 @@ $$
 以下是 **第 $l$ 层，在 decoding step $t$** 的真实执行顺序：
 
 **Step 1：LayerNorm**
+
 $$
 h^{(l)}_t \rightarrow \tilde{h}^{(l)}_t
 $$
+
 **Step 2：Attention（Dense，使用 KV Cache）**
 
 计算 QKV（只算 Q 是新的）：
+
 $$
 \begin{aligned}
 Q^{(l)}_t &= \tilde{h}^{(l)}_t W_Q^{(l)} \\
@@ -173,31 +186,42 @@ K^{(l)}_t &= \tilde{h}^{(l)}_t W_K^{(l)} \\
 V^{(l)}_t &= \tilde{h}^{(l)}_t W_V^{(l)}
 \end{aligned}
 $$
+
 写入 KV cache（**每层独立**），完成Attention 计算（Query × 历史 KV）
+
 $$
 \text{Attn}^{(l)}_t =
 \text{softmax}\left(
 Q_t K_{1:t}^\top
 \right)V_{1:t}
 $$
+
 **Step 3：Residual**
+
 $$
 h'^{(l)}_t = h^{(l)}_t + \text{Attn}^{(l)}_t
 $$
+
 **Step 4：LayerNorm**
+
 $$
 \hat{h}^{(l)}_t = \text{LN}(h'^{(l)}_t)
 $$
+
 **Step 5：MoE Router（token-level）**
 
 Router 计算：
+
 $$
 g^{(l)}_t = \text{softmax}(W_r^{(l)} \hat{h}^{(l)}_t)
 $$
+
 选 Top-K experts：
+
 $$
 \mathcal{E}^{(l)}_t = \text{TopK}(g^{(l)}_t)
 $$
+
 **Step 6：Expert Dispatch**
 
 token embedding 被发送到：
@@ -208,19 +232,25 @@ token embedding 被发送到：
 **Step 7：Expert FFN（稀疏执行）**
 
 对每个被选 expert：
+
 $$
 f_{e}(\hat{h}) = W_{2,e}\,\sigma(W_{1,e}\hat{h})
 $$
+
 **Step 8：Combine（加权求和）**
+
 $$
 \text{MoE}^{(l)}_t
 = \sum_{e \in \mathcal{E}_t}
 g^{(l)}_{t,e}\,f_e(\hat{h}^{(l)}_t)
 $$
+
 **Step 9：Residual**
+
 $$
 h^{(l+1)}_t = h'^{(l)}_t + \text{MoE}^{(l)}_t
 $$
+
 随后进入下一层。
 
 流程大致如下：
