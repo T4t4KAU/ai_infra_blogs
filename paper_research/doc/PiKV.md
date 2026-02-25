@@ -128,14 +128,14 @@ PiKV针对这三个挑战进行设计：
 
 将原本互相独立的问题看成一个耦合的问题进行优化，routing / compression / scheduling 这三个系统 knobs 上做联合优化，定义系统目标函数：
 
-$$
+```math
 \min_{R,C,S} \; \mathbb{E}_{q\sim Q}
 \big[
 \text{Latency}(q)
 + \lambda_1 \cdot \text{Memory}(q)
 - \lambda_2 \cdot \text{Fidelity}(q)
 \big]
-$$
+```
 
 其中：
 

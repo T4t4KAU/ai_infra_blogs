@@ -988,6 +988,3 @@ pip install --upgrade pip setuptools wheel
 ```
 
 接下来进入项目目录，按照README执行就行，不过有几点得格外注意。有的包在安装的时候得加`--no-build-isolation`，不然会`ModuleNotFound`；并且transformers这个包建议用4.46，而不是requirements.txt中的4.43，复现过程中可能有大大小小的坑。
-
-本人是在4卡A6000上跑eval_acc，分别运行：
-

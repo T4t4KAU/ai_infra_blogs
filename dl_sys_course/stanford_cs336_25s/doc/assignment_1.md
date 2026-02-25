@@ -118,3 +118,91 @@ lo w e s t </w>
 - **subword 词表**
 - **有序 merge rules 列表**
 
+代码如下：
+
+```
+def run_train_bpe(
+        input_path: str | os.PathLike,
+        vocab_size: int,
+        special_tokens: list[str],
+        **kwargs,
+) -> tuple[dict[int, bytes], list[tuple[bytes, bytes]]]:
+    # Initialize vocabulary with 256 byte tokens
+    vocab = {i: bytes([i]) for i in range(256)}
+
+    # Convert special tokens to bytes
+    special_tokens_bytes = [tok.encode("utf-8") for tok in special_tokens]
+
+    # Add special tokens to vocabulary
+    for i, tok in enumerate(special_tokens_bytes):
+        vocab[256 + i] = tok
+
+    # Calculate number of merges needed
+    num_merges = vocab_size - len(vocab)
+    if num_merges <= 0:
+        return vocab, []
+
+    merges = []  # List to store merge operations
+
+    # Read the training corpus
+    with open(input_path, "rb") as f:
+        raw_data = f.read()
+
+    # Convert raw bytes to list of single-byte tokens
+    corpus_tokens = [bytes([b]) for b in raw_data]
+
+    # Main BPE training loop
+    for merge_idx in range(num_merges):
+        # Count frequency of all adjacent token pairs
+        pair_counts = Counter()
+
+        i = 0
+        while i < len(corpus_tokens) - 1:
+            # Skip inside special tokens (they should not be split)
+            if corpus_tokens[i] in special_tokens_bytes:
+                i += 1
+                continue
+
+            pair = (corpus_tokens[i], corpus_tokens[i + 1])
+            pair_counts[pair] += 1;
+            i += 1
+
+        # If no more pairs to merge, stop training
+        if not pair_counts:
+            break
+
+        # Find the most frequent pair
+        most_common_pair = pair_counts.most_common(1)[0][0]
+
+        # Add this merge to the merges list
+        merges.append(most_common_pair)
+
+        # Create new token by merging the pair
+        new_token = most_common_pair[0] + most_common_pair[1]
+
+        # Add new token to vocabulary
+        new_token_id = len(vocab)
+        vocab[new_token_id] = new_token
+
+        # Apply this merge to the entire corpus
+        new_corpus_tokens = []
+        i = 0
+        while i < len(corpus_tokens):
+            # check if can merge current token and next token
+            if (i < len(corpus_tokens) - 1 and (corpus_tokens[i], corpus_tokens[i + 1]) == most_common_pair):
+                new_corpus_tokens.append(new_token)
+                i += 2
+            else:
+                new_corpus_tokens.append(corpus_tokens[i])
+                i += 1
+
+        # Update corpus with merged tokens
+        corpus_tokens = new_corpus_tokens
+
+        if kwargs.get('verbose', False):
+            print(f"Merge {merge_idx + 1}/{num_merges}: "
+                  f"{most_common_pair[0]} + {most_common_pair[1]} -> {new_token}")
+
+    return vocab, merges
+```
+
