@@ -73,6 +73,14 @@ softmax_v3: softmax_v3.cu
 	@mkdir -p $(BUILD_DIR)
 	$(NVCC) $(NVCC_FLAGS) $< -o $(BUILD_DIR)/$@
 
+self_attn: self_attn.cu
+	@mkdir -p $(BUILD_DIR)
+	$(NVCC) $(NVCC_FLAGS) $< -o $(BUILD_DIR)/$@
+
+flash_attn: flash_attn.cu
+	@mkdir -p $(BUILD_DIR)
+	$(NVCC) $(NVCC_FLAGS) $< -o $(BUILD_DIR)/$@
+
 # ============================================================
 # NCU profiling rule (generic)
 # ============================================================
