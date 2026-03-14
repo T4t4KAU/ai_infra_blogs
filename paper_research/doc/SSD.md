@@ -480,7 +480,7 @@ target 比 draft 更"想选"的 token，会在 residual 里保留下来，draft 
 
 所以，bonus token 从 target > draft 的 token 中采样，但 residual distribution 很稀疏，尤其在 **高 temperature **的时候，很难预测这个分布情况。
 
-本文的做法是 **主动修改** draft model 给出的 $p{draft} $，从而改变 residual，对于某个 token t，如果把 $p{draft}(t) $ 降低，那么target和draft的差值就会放大，该 token 在 residual distribution 里的权重就更高，从而更容易被选中。
+本文的做法是 **主动修改** draft model 给出的 $p_{draft} $，从而改变 residual，对于某个 token t，如果把 $p_{draft}(t)$ 降低，那么target和draft的差值就会放大，该 token 在 residual distribution 里的权重就更高，从而更容易被选中。
 
 这就是 Saguaro sampling 的核心想法：**故意压低一部分 token 在 draft 中的概率，让它们在 residual 中更容易冒出来。**
 
