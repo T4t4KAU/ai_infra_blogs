@@ -710,7 +710,7 @@ x \;\longrightarrow\; \text{Norm} \;\longrightarrow\; \text{Attention} \;\longri
 整层公式可以理解成：
 ```math
 h = x + \mathrm{SelfAttn}(\mathrm{RMSNorm}(x)) \\
-y=h + \mathrm{MLP}(\mathrm{RMSNorm}(h))
+y = h + \mathrm{MLP}(\mathrm{RMSNorm}(h))
 ```
 我们主要将上面的模块组合到代码中：
 
@@ -1657,3 +1657,4 @@ print(res)
 
 ```
 
+`
