@@ -83,7 +83,7 @@ r(x) = \frac{\max(0, p(x) - q(x))}{Z}
 Z = \sum_x \max(0, p(x) - q(x))
 ```
 
-关键点：重新采样的 token **不会再被拒绝**，这是 speculative decoding 的一个重要性质。因此：**从 residual 分布采样的 token 是直接接受的。**这基于一个很简单的数学原理，这里就不作赘述了。
+关键点：重新采样的 token **不会再被拒绝**，这是 speculative decoding 的一个重要性质。因此： **从 residual 分布采样的 token 是直接接受的** 这基于一个很简单的数学原理，这里就不作赘述了。
 
 ## Overview
 

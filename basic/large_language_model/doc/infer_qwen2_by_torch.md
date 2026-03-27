@@ -236,14 +236,18 @@ Qwen2ForCausalLM(
 这里实现的是RMSNorm，作用是稳定Transformer每层输入的尺度，使深层网络更容易训练。
 
 RMSNorm做的是：
+
 ```math
 \text{向量} \rightarrow
 \frac{\text{向量}}{\text{RMS长度}}
 ```
+
 再乘一个可学习尺度：
+
 ```math
 \gamma
 ```
+
 本质意义：**稳定Transformer每层输入的尺度，使深层网络更容易训练。**
 
 下面来分步给出计算方法以及意义
