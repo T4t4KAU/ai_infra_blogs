@@ -450,11 +450,11 @@ Nsight Compute 适合回答“某个 kernel 为什么慢”。它不适合第一
 
 推荐流程：
 
-1. 先用 Nsight Systems 找到热 kernel 名称。
-2. 用 `ncu --kernel-name` 只抓少数 kernel。
-3. 先用 `--set basic`，再逐步加 section。
+1. 先用 Nsight Systems 找到热 kernel 名称
+2. 用 `ncu --kernel-name` 只抓少数 kernel
+3. 先用 `--set basic`，再逐步加 section
 
-示例：抓第 30 次之后的 5 个匹配 kernel。
+示例：抓第 30 次之后的 5 个匹配 kernel
 
 ```bash
 ncu \
